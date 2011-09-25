@@ -24,8 +24,4 @@ module Downloader
       @agent.get(url).page.body
     end
   end
-  
-  class ProxyFinder
-  end
-  
 end

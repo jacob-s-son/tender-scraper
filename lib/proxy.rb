@@ -53,13 +53,8 @@ module Proxy
       ProxyServer.delete_all
     end
     
-    def download_raw_list
-      #FIXME Te vajag ieviest e-pasta novilkšanu no gmeila kopā ar visu attachu
-      "146.57.249.99:3124\n79.119.31.87:8080"
-    end
-    
     def populate_list
-      download_raw_list.scan(/^([0-9\.]+):([0-9]{2,4})$/).each do |ip|
+      poll_mail.scan(/^([0-9\.]+):([0-9]{2,4})$/).each do |ip|
         ProxyServer.create(:ip => ip[0], :port => ip[1], :black_listed_flag => false)
       end
       ProxyServer.all.size
