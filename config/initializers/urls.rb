@@ -1,0 +1,2 @@
+LT_TENDERS = ""
+LT_RESULTS = ""

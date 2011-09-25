@@ -4,6 +4,7 @@ gem 'sqlite3'
 gem 'json'
 gem 'jquery-rails'
 gem 'capistrano'
+gem 'mechanize'
 gem 'mongrel'
 
 group :assets do
@@ -15,4 +16,11 @@ end
 group :development do 
   gem 'rspec-rails'
   gem 'ruby-debug'
+end
+
+group :test do 
+  gem 'factory_girl'
+  gem 'rspec-rails'
+  gem 'ruby-debug'
+  gem 'shoulda'
 end
