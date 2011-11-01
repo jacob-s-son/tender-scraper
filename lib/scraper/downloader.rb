@@ -2,11 +2,12 @@ require 'mechanize'
 require 'proxy.rb'
 
 module Downloader
-  mattr_accessor :agent
+  attr_accessor :downloader
   
   class Downloader
     include Proxy::ProxyListManager
     include Proxy::ProxySetter
+    attr_accessor :agent
     
     def initialize
       @agent = Mechanize.new
@@ -14,14 +15,19 @@ module Downloader
       
       if list_empty? || all_blacklisted?
         truncate_proxy_servers
-        download_raw_list
+        populate_list
       end
       
       find_working_proxy
     end
     
     def download(url)
-      @agent.get(url).page.body
+      @agent.get(url).body
     end
+  end
+  
+  def download(url)
+    @downloader = Downloader.new unless @downloader
+    @downloader.download url
   end
 end

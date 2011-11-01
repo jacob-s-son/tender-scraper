@@ -23,7 +23,7 @@ describe Proxy::ProxyListManager do
     end
     
     it "should create ProxyServer objects from raw proxy list and return hwo many proxy servers added" do
-      self.stub!(:download_raw_list).and_return("146.57.249.99:3124\n79.119.31.87:8080")
+      self.stub!(:poll_mail).and_return("146.57.249.99:3124\n79.119.31.87:8080")
       self.populate_list.should == 2
       ProxyServer.first.ip.should == "146.57.249.99"
       ProxyServer.first.port.should == "3124"

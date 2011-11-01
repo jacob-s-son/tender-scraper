@@ -5,12 +5,10 @@ describe Proxy::ProxyListMailReceiver do
     before do
       #TODO: Jāpārdomā visa stubošana , iespējams daudz izdevīgāk vienkārši sūtīt meilu uz testa pastkasti
       @imap = mock(Net::IMAP)
-      @imap.stub!(:login).and_return(true)
-      @imap.stub!(:select).and_return(true)
-      @imap.stub!(:close).and_return(true)
-      @imap.stub!(:logout).and_return(true)
-      @imap.stub!(:disconnect).and_return(true)
-      @imap.stub!(:disconnected?).and_return(false)
+      @imap.stub(
+        :login => true, :select => true, :close => true, 
+        :logout => true, :disconnect => true, :disconnected? => true, 
+        :uid_copy => true, :uid_store => true)
       Net::IMAP.stub!(:new).and_return(@imap)
     end
     
