@@ -47,7 +47,7 @@ module Scraper
   
   class Parser
     include Downloader
-    attr_accessor :url, :doc, :country
+    attr_accessor :url, :doc, :country_code, :xpath_list
     
     def initialize(params = {})
       if params[:url]
