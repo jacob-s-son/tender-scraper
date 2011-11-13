@@ -46,6 +46,8 @@ module LtTenderParser
    #   "value"                 => ""
    # }
    
+   
+  # values defined without parsing, may be ovverriden by document module methods
   def sector
    "Public"
   end
@@ -54,6 +56,16 @@ module LtTenderParser
     "Lietuva"
   end
   
+  def value
+    "National"
+  end
+  
+  def tender_type
+    "Tender (Pirkimas)"
+  end
+  
+  
+  #tender fiels methods, common to all LT tender documents
   def buyer_name
     extract_data("buyer_name").match(/^(.+?)\(\d/u).to_a[1].to_s.strip
   end
@@ -106,6 +118,26 @@ module LtTenderParser
       memo << cpv_code.to_s if cpv_code
       memo
     end
+  end
+  
+  def closing_date
+    default_date extract_data "closing_date"
+  end
+  
+  def closing_time
+    default_time extract_data "closing_time"
+  end
+  
+  #LT helper methods
+  
+  def default_date date_str
+    if match_data = date_str.match(/(20[1-9][1-9])-([0-1]?[0-9])-([0-3][0-9])/)
+      Date.civil(match_data[1].to_i, match_data[2].to_i, match_data[3].to_i)
+    end
+  end
+  
+  def default_time time_str
+    time_str.match(/[0-9]+:[0-6][0-9]/).to_s
   end
   
   #method for extending Parser class with document specific methods
