@@ -1,7 +1,6 @@
 require 'base64'
 
 module TenderParser
-  include Downloader
   
   #return hash with keys correpsonding to tender columns
   def tender_fields
@@ -67,13 +66,6 @@ module TenderParser
   end
   
   def country
-    case @country_code
-      when :lt
-        "Lietuva"
-      when :lv
-        "Latvia"
-      when :ee
-        "Estonia"
-    end
+    CODES_TO_COUNTRIES[@country_code]
   end 
 end

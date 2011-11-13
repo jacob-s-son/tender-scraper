@@ -26,22 +26,27 @@ module Scraper
   
   # class that collect URLs of the new tenders that haven't been scraped yet
   class TenderUrlScraper
-    attr_accessor :country, :last_url
+    include Downloader
+    attr_accessor :country_code, :last_url, :current_page, :current_page_nr, :from_date
     
-    def initialize(country, to_date = Date.today)
-      @country = country
-      extend_with_country_module    
-      @last_url = Tender.where(:country => country, :publication_date => to_date).order("publication_date DESC").first.try(:url)
+    def initialize(country, from_date = Date.today)
+      @country_code = country      
+      @last_url = Tender.where(:country => CODES_TO_COUNTRIES[@country_code], :publication_date => from_date).order("publication_date DESC").first.try(:url)
+      @current_page_nr = 1
+      @current_page = agent.get TENDER_URLS[@country_code]
+      @from_date = from_date
+      
+      p from_date
+      extend_with_country_module
     end
     
     private
-    def extend_with_country_module(country = @country)
-      module_name = "#{country.to_s.capitalize}UrlScraper"
+    def extend_with_country_module(country = @country_code)
+      module_name = "#{country_code.to_s.capitalize}UrlScraper"
       path = "#{Rails.root}/lib/scraper/url_scrapers"
-      file_name = "#{path}/#{module_name}.rb"
       
-      require "#{path}/#{file_name}.rb"
-      extend get_const(module_name)
+      require "#{path}/#{module_name.underscore}.rb"
+      extend Kernel.const_get(module_name)
     end
   end
   
@@ -88,7 +93,6 @@ module Scraper
       module_name = "#{country.to_s.capitalize}TenderParser"
       path        = "#{Rails.root}/lib/scraper/parsers"
       file_name   = "#{country.to_s}_tender_parser.rb"
-      puts file_name
       
       require "#{path}/#{file_name}"
       extend Kernel.const_get(module_name)

@@ -4,7 +4,7 @@ gem 'sqlite3'
 gem 'json'
 gem 'jquery-rails'
 gem 'capistrano'
-gem 'mechanize'
+gem 'mechanize'#, :git => 'git://github.com/tenderlove/mechanize.git'# , :ref => '6831c08ad5f3d83be79470c0fe4bb98d2c1db008'
 gem 'mongrel'
 
 group :assets do

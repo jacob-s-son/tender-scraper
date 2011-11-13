@@ -4,6 +4,7 @@ require 'proxy.rb'
 module Downloader
   attr_accessor :downloader
   
+  #maybe it's wise to simply inherit this class from Mechanize
   class Downloader
     # include Proxy::ProxyListManager
     # include Proxy::ProxySetter
@@ -30,5 +31,10 @@ module Downloader
   def download(url)
     @downloader = Downloader.new unless @downloader
     @downloader.download url
+  end
+  
+  def agent
+    @downloader = Downloader.new unless @downloader
+    @downloader.agent
   end
 end

@@ -1,5 +1,5 @@
 module Sk5Parser
-  def procurement_procedure
+  def tender_type
     "Contract award (Laimėtas konkursas)"
   end
 end
