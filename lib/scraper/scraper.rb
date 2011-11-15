@@ -10,16 +10,15 @@ module Scraper
   
   # receives list of URLs , intializes parser and save new tender
   class TenderScraper
-    attr_accessor :url_scraper, :parser
+    attr_accessor :url_scraper
     
-    def initialize(country)
-      @url_scrpaer = TenderUrlScraper.new country
-      @parser = Parser.new country
+    def initialize(country_code, from_date = Date.today)
+      @url_scraper = TenderUrlScraper.new country_code, from_date
     end
     
     def scrape
       @url_scraper.get_urls.each do |url|
-        @parser.parse(url)
+        Tender.create( Scraper::Parser.parse(url) )
       end
     end
   end
@@ -36,7 +35,6 @@ module Scraper
       @current_page = agent.get TENDER_URLS[@country_code]
       @from_date = from_date
       
-      p from_date
       extend_with_country_module
     end
     

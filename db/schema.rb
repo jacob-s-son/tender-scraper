@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111108122055) do
+ActiveRecord::Schema.define(:version => 20111114201451) do
 
   create_table "proxy_servers", :force => true do |t|
     t.string   "ip"
@@ -51,13 +51,15 @@ ActiveRecord::Schema.define(:version => 20111108122055) do
     t.string   "attachment"
     t.string   "tender_type"
     t.string   "sector"
-    t.decimal  "value"
+    t.string   "value"
     t.text     "document"
     t.integer  "exported_times"
     t.time     "exported_at"
     t.integer  "last_time_exported_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "last_time_edited_by"
+    t.boolean  "marked_for_export"
   end
 
 end

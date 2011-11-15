@@ -4,7 +4,7 @@ module TenderParser
   
   #return hash with keys correpsonding to tender columns
   def tender_fields
-    unneeded_columns = [ "id", "created_at", "updated_at", "exported_times", "exported_at", "last_time_exported_by", "last_edited_by" ]
+    unneeded_columns = [ "id", "created_at", "updated_at", "exported_times", "exported_at", "last_time_exported_by", "last_time_edited_by" ]
     
     # 1) get all tender columns, 2) delete nonefield columns, 3) create hash , where each key is Tender column with initial value of nil
     Tender.column_names.reject {|cn| unneeded_columns.include?(cn) }.inject({}) {|memo, v| memo[v] = nil; memo }
