@@ -6,6 +6,8 @@ gem 'jquery-rails'
 gem 'capistrano'
 gem 'mechanize'#, :git => 'git://github.com/tenderlove/mechanize.git'# , :ref => '6831c08ad5f3d83be79470c0fe4bb98d2c1db008'
 gem 'mongrel'
+gem 'bootstrap-sass', '1.4.0'
+gem 'haml'
 
 group :assets do
   gem 'sass-rails', "  ~> 3.1.0"
