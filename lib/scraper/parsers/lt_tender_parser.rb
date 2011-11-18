@@ -92,7 +92,7 @@ module LtTenderParser
   
   def city
     #divide in portions, last portion is city
-    splitted_address = extract_data("address").split(",").last.strip
+    splitted_address = extract_data("address").split(",").last.to_s.strip
   end
   
   def post_code
@@ -146,5 +146,9 @@ module LtTenderParser
     form_name = extract_data("form_number").match(/(Sk-[0-9])\s+tipinė\s+forma/iu).to_a[1].to_s.sub /-/, ""
     form_name = "Sk6" if form_name.empty? #ensuring that some default module is loaded
     "#{form_name}Parser"
+  end
+  
+  def default_document_module
+    "Sk6Parser"
   end
 end

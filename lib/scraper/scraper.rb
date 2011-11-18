@@ -16,8 +16,8 @@ module Scraper
       @url_scraper = TenderUrlScraper.new country_code, from_date
     end
     
-    def scrape
-      @url_scraper.get_urls.each do |url|
+    def scrape( params = {} )
+      @url_scraper.get_urls(params).each do |url|
         Tender.create( Scraper::Parser.parse(url) )
       end
     end
@@ -97,10 +97,16 @@ module Scraper
     end
     
     def extend_with_document_module
+      path        = "#{Rails.root}/lib/scraper/parsers/#{@country_code}_document_parsers/"
       module_name = document_module_name
-      path = "#{Rails.root}/lib/scraper/parsers/#{@country_code}_document_parsers/#{document_module_name.underscore}.rb"
+      full_path   = "#{path}#{document_module_name.underscore}.rb"
       
-      require path
+      unless File.exist? full_path
+        module_name = default_document_module
+        full_path   = "#{path}#{module_name.underscore}.rb"
+      end        
+      
+      require full_path
       extend Kernel.const_get(module_name)
     end
   end
