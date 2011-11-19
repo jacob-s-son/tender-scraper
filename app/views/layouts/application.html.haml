@@ -1,0 +1,11 @@
+!!!
+%html
+  %head
+    %title TenderScraper
+    = stylesheet_link_tag "application"
+    = javascript_include_tag "application"
+    = csrf_meta_tags
+  %body
+    .container
+      = render "layouts/navigation"
+      = yield

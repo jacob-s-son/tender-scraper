@@ -8,6 +8,9 @@ gem 'mechanize'#, :git => 'git://github.com/tenderlove/mechanize.git'# , :ref =>
 gem 'mongrel'
 gem 'bootstrap-sass', '1.4.0'
 gem 'haml'
+gem 'twitter_bootstrap_form_for'
+gem 'mysql2'
+gem 'will_paginate'
 
 group :assets do
   gem 'sass-rails', "  ~> 3.1.0"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111114201451) do
+ActiveRecord::Schema.define(:version => 20111119191250) do
 
   create_table "proxy_servers", :force => true do |t|
     t.string   "ip"
@@ -43,7 +43,7 @@ ActiveRecord::Schema.define(:version => 20111114201451) do
     t.date     "publication_date"
     t.date     "closing_date"
     t.string   "closing_time"
-    t.string   "opening_date"
+    t.date     "opening_date"
     t.string   "opening_time"
     t.date     "material_closing_date"
     t.string   "material_closing_time"
@@ -60,6 +60,8 @@ ActiveRecord::Schema.define(:version => 20111114201451) do
     t.datetime "updated_at"
     t.integer  "last_time_edited_by"
     t.boolean  "marked_for_export"
+    t.boolean  "locked"
+    t.string   "status"
   end
 
 end

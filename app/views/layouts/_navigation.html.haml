@@ -1,0 +1,4 @@
+#navgigation-container
+  %ul.tabs
+    - CODES_TO_COUNTRIES.each do |key, val|
+      %li{:class => "#{'active' if key == :lt }"}= link_to val, tenders_path(:country => val)

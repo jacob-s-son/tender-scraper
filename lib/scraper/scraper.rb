@@ -17,9 +17,15 @@ module Scraper
     end
     
     def scrape( params = {} )
-      @url_scraper.get_urls(params).each do |url|
+      result = { :tenders_scraped => 0 }
+      
+      urls = @url_scraper.get_urls(params)
+      urls.each do |url|
         Tender.create( Scraper::Parser.parse(url) )
+        result[:tenders_scraped] += 1
       end
+      
+      result.merge({ :last_url_scraped => urls.last, :first_url_scraped => urls.first })
     end
   end
   

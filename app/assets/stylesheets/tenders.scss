@@ -1,0 +1,24 @@
+form {
+    div.clearfix 
+    {
+        margin-bottom: 5px;
+    }
+    
+    label 
+    {
+        padding-top: 0px;
+    }
+    
+    legend.form_legend 
+    {
+    }
+    
+    fieldset.hidden_legend 
+    {
+        padding-top: 0px;
+        legend 
+        {
+            display:none;   
+        }
+    }
+}

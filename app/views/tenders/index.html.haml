@@ -1,10 +1,7 @@
-.container
-  .row
-    %span{:class => "span8" }
-      %blockquote
-        %p Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        %small Dr. Julius Hibbert
-    %span{:class => "span8" }
-      %blockquote
-        %p Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-        %small Dr. Julius Hibbert
+= tenders_url(:format => :xml)
+#tender-container{"data-json-url" => tenders_url(:format => :json)}
+  - unless @tenders.empty?
+    - @tenders.each do |t|
+      = render :partial => "tender", :locals => {:tender => t}
+  - else
+    %p No new tenders!

@@ -1,0 +1,19 @@
+.tender-controls
+  = tender_label(tender)
+= link_to tender.url
+= twitter_bootstrap_form_for tender do |f|
+  = f.inputs do
+    - Tender::TENDER_FIELD_ORDER.each do |cat|
+      = f.inputs "#{cat[0].capitalize unless cat[0] == 'general'}", :class => "#{cat[0] == 'general' ? 'hidden_legend' : 'form_legend'}" do
+        - cat[1].each do |attr|
+          = tender_field_helper f, attr, tender.locked?
+    - Tender.misc_fields.each do |attr|
+      = tender_field_helper f, attr, tender.locked?
+  = f.actions do
+    - if tender.locked?
+      = f.submit 'Save', :disabled => "true"
+      = button_tag  'Cancel', :type => 'reset', :class => 'btn', :disabled => "true"
+    - else
+      = f.submit 'Save'
+      = button_tag  'Cancel', :type => 'reset', :class => 'btn'
+      
