@@ -1,4 +1,9 @@
 #navgigation-container
   %ul.tabs
     - CODES_TO_COUNTRIES.each do |key, val|
-      %li{:class => "#{'active' if key == :lt }"}= link_to val, tenders_path(:country => val)
+      %li{:class => "#{ 'dropdown' + (' active' if key == :lt).to_s }", :"data-dropdown" => "dropdown"}
+        = link_to "#{val}", "#", :class => 'dropdown-toggle'
+        %ul.dropdown-menu
+          %li= link_to "#{val} (New)", tenders_path(:country => val, :status => 'new')
+          %li= link_to "#{val} (Added today)", tenders_path(:country => val, :created_at => Date.today)
+      

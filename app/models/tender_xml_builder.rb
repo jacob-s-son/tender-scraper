@@ -3,7 +3,7 @@ require 'nokogiri'
 class TenderXmlBuilder
   def self.xml(tenders_for_export)
     tenders_for_export.each do |t|
-      t.attributes.each_pair { |k,v| t.send k, v.to_s }
+      Tender.exportable_fields.each { |k| t.send "#{k}=", (t.send k).to_s }
     end
     
     (<<-xml

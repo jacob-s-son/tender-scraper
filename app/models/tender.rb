@@ -1,6 +1,10 @@
 class Tender < ActiveRecord::Base
   serialize :cpv_codes, Array
   after_initialize :set_defaults
+  scope :created_since, lambda { |ago|
+      where("tenders.created_at >= ?", ( ago ? Date.parse(ago) : Date.today ) )
+    }
+  self.per_page = 10
   STATUSES = [ :new, :marked_for_export, :exported]
   
   TENDER_FIELD_ORDER = [ 
@@ -62,8 +66,6 @@ class Tender < ActiveRecord::Base
   
   #class methods
   class << self
-    per_page = 10
-    
     def editable_fields
       column_names - NONE_EDITABLE_FIELDS
     end
@@ -72,18 +74,22 @@ class Tender < ActiveRecord::Base
       editable_fields - TENDER_FIELD_ORDER.flatten
     end
     
+    def exportable_fields
+      column_names - NONE_EXPORTABLE_FIELDS
+    end
+    
     def search(params = {}, without_pagination=false)
       params           = {:page => 1}.merge(params)
 
       unless without_pagination
-        where( clean_params(params) ).page(params[:page]).order('created_at DESC')
+        created_since(params[:created_at]).where( clean_params(params) ).page(params[:page]).order('created_at DESC')
       else
-        where( clean_params(params) ).order('created_at DESC')
+        created_since(params[:created_at]).where( clean_params(params) ).order('created_at DESC')
       end
     end
     
     def clean_params(params)
-      params.reject {|key,value| !column_names.include?(key.to_s) }
+      params.reject {|key,value| !column_names.include?(key) || key == "created_at" }
     end
   end
   

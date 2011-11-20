@@ -1,4 +1,5 @@
 jQuery ->
+  $('.tabs').tabs()
   if $('#tender-container').length
     new TendersPager()
     
