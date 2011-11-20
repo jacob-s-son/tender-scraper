@@ -1,24 +1,54 @@
 form {
+  div.inline-inputs 
+  {
+    display:block;
+    clear:both;
+    
     div.clearfix 
     {
-        margin-bottom: 5px;
+      display:inline-block;
+      float:left;
+            
+      input, label
+      {
+        display:inline-block;
+        float:left;
+      }      
     }
     
-    label 
+    div.clearfix:nth-child(2)
     {
-        padding-top: 0px;
+      div.input 
+      {
+        margin-left:60px;
+      } 
+      label
+      {
+        width:50px;
+      } 
     }
+  }
+  
+  div.clearfix 
+  {
+    margin-bottom: 5px;
+  }
     
-    legend.form_legend 
-    {
-    }
+  label 
+  {
+    padding-top: 0px;
+  }
     
-    fieldset.hidden_legend 
+  legend.form_legend 
+  {
+  }
+    
+  fieldset.hidden_legend 
+  {
+    padding-top: 0px;
+    legend 
     {
-        padding-top: 0px;
-        legend 
-        {
-            display:none;   
-        }
+      display:none;   
     }
+  }
 }

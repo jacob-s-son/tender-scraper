@@ -4,11 +4,18 @@
 = twitter_bootstrap_form_for tender do |f|
   = f.inputs do
     - Tender::TENDER_FIELD_ORDER.each do |cat|
-      = f.inputs "#{cat[0].capitalize unless cat[0] == 'general'}", :class => "#{cat[0] == 'general' ? 'hidden_legend' : 'form_legend'}" do
-        - cat[1].each do |attr|
-          = tender_field_helper f, attr, tender.locked?
+      - if cat[0] == 'dates'
+        = f.inputs '', :class => 'hidden_legend date_inputs_container' do
+          - cat[1].each do |attr|
+            .inline-inputs
+              = tender_field_helper f, attr[0], {:disabled => tender.locked? }
+              = tender_field_helper f, attr[1], {:disabled => tender.locked?, :label => ', time', :class => '' }
+      -else
+        = f.inputs "#{cat[0].capitalize unless cat[0] == 'general'}", :class => "#{cat[0] == 'general' ? 'hidden_legend' : 'form_legend'}" do
+          - cat[1].each do |attr|
+            = tender_field_helper f, attr, {:disabled => tender.locked? }
     - Tender.misc_fields.each do |attr|
-      = tender_field_helper f, attr, tender.locked?
+      = tender_field_helper f, attr, { :disabled => tender.locked? }
   = f.actions do
     - if tender.locked?
       = f.submit 'Save', :disabled => "true"

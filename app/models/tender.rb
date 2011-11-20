@@ -13,13 +13,14 @@ class Tender < ActiveRecord::Base
         "case_number",
         "heading",
         "cpv_codes",
-        "nuts_code",
-        "material_closing_date",
-        "material_closing_time",
-        "closing_date",
-        "closing_time",
-        "opening_date",
-        "opening_time"
+        "nuts_code"
+      ]
+    ],
+    ["dates", 
+      [
+        [ "material_closing_date", "material_closing_time" ],
+        [ "closing_date", "closing_time" ],
+        [ "opening_date", "opening_time" ]
       ]
     ],
     ["buyer",  
@@ -95,6 +96,10 @@ class Tender < ActiveRecord::Base
   
   def locked?
     locked
+  end
+  
+  def to_xml
+    Tender.exportable_fields.inject({}) { |memo, k| memo[k] = (self.send k).to_s; memo }.to_xml(:skip_instruct => true, :skip_types => true)
   end
   
   private

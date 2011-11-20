@@ -1,20 +1,21 @@
 module TendersHelper
-  def tender_field_helper(f, attrib, disabled = true)
-    default_class = '.span5'
+  def tender_field_helper(f, attrib, options={})
+    options = { :disabled => true, :label => attrib.humanize}.merge(options)
+    options[:class] = options[:class].to_s + '.span5'
     
     field = if attrib.match /email/
-      [ "email_field", default_class ]
+      "email_field"
     # elsif Tender.columns_hash[attrib].type == :date
     #   ["date_select", default_class]
     else
-      ["text_field", default_class]
+      "text_field"
     end
     
-    if disabled
-      f.send field[0], attrib.to_sym, :class => field[1], :disabled => true
-    else
-      f.send field[0], attrib.to_sym, :class => field[1]
-    end
+    # if disabled
+      f.send field, attrib.to_sym, options[:label], options#, label, :class => field[1], :disabled => true
+    # else
+      # f.send field[0], attrib.to_sym#, label, :class => field[1]
+    # end
   end
   
   def tender_label(tender)
