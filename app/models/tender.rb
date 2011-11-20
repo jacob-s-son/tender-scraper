@@ -79,10 +79,10 @@ class Tender < ActiveRecord::Base
     end
     
     def search(params = {}, without_pagination=false)
-      params           = {:page => 1}.merge(params)
+      params = {"page" => 1}.merge(params)
 
       unless without_pagination
-        created_since(params[:created_at]).where( clean_params(params) ).page(params[:page]).order('created_at DESC')
+        created_since(params[:created_at]).where( clean_params(params) ).page(params["page"]).order('created_at DESC')
       else
         created_since(params[:created_at]).where( clean_params(params) ).order('created_at DESC')
       end

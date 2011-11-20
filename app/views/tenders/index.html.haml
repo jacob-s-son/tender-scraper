@@ -1,5 +1,4 @@
-= tenders_url(:format => :xml)
-#tender-container{"data-json-url" => tenders_url(:format => :json)}
+#tender-container{"data-url" => tenders_url }
   - unless @tenders.empty?
     - @tenders.each do |t|
       = render :partial => "tender", :locals => {:tender => t}
