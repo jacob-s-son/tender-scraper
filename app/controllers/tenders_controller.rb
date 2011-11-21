@@ -1,5 +1,5 @@
 class TendersController < ApplicationController
-  before_filter :find_tender, :only => [ :update, :toggle_lock ]
+  before_filter :find_tender, :only => [ :update, :lock, :unlock ]
   
   def index
     #FIXME:looks ugly
@@ -19,9 +19,15 @@ class TendersController < ApplicationController
     end
   end
   
-  def toggle_lock
+  def lock
     respond_to do |format|
-      format.json { render :json => { :msg => @session_id }  }#@tender.toggle_lock(@session_id)
+      format.json { render :json => @tender.lock }
+    end
+  end
+  
+  def unlock
+    respond_to do |format|
+      format.json { render :json => @tender.unlock(@session_id) }
     end
   end
   

@@ -1,6 +1,11 @@
 .tender-controls
   = tender_label(tender)
-  = button_tag 'Edit', :class => 'btn form-unlocker', :id => "unlock-tender-form-#{tender.id}", :"data-url" => toggle_lock_tender_path(tender.id)
+  = button_tag 'Edit', :class => 'btn form-unlocker', :id => "unlock-tender-form-#{tender.id}", :"data-url" => unlock_tender_path(tender.id)
+  %div{ :id => "tender-#{tender.id}-message", :class => "alert-message tender-message" }
+    %p{ :class => 'hidden'}
+    - unless tender.errors.empty?
+      - tender.errors.each do |e|
+        %p= e.to_s
 = link_to tender.url, tender.url
 = twitter_bootstrap_form_for tender do |f|
   = f.inputs do
@@ -20,8 +25,8 @@
   = f.actions do
     - if tender.locked?(@session_id)
       = f.submit 'Save', :disabled => "true"
-      = button_tag  'Cancel', :type => 'reset', :class => 'btn', :disabled => "true"
+      = button_tag  'Cancel', :type => 'reset', :"data-url" => lock_tender_path(tender), :class => 'btn cancel', :id => "tender-#{tender.id}-cancel-btn", :disabled => "true"
     - else
       = f.submit 'Save'
-      = button_tag  'Cancel', :type => 'reset', :class => 'btn'
+      = button_tag  'Cancel', :type => 'reset', :"data-url" => lock_tender_path(tender), :class => 'btn cancel', :id => "tender-#{tender.id}-cancel-btn"
       

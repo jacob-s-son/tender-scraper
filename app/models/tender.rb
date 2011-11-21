@@ -8,14 +8,15 @@ class Tender < ActiveRecord::Base
   LOCK_INTERVAL = 5*60 #5 min
   
   MESSAGES = 
-  [
+  {
     :locked           => 'You need to lock this tender for editing before edit it!',
     :locked_by_others => 'This tender is already locked for editing by another user!',
     :locked_for_user  => 'Tender successfully locked for editing! You may now update tender fields!',
     :saved            => 'Tender successfully saved!',
     :general_error    => 'System error, please, try again!',
-    :could_not_save   => 'Your lock has been expired while you were editing tender! Lock this tender again before editing and saving!'
-  ]
+    :could_not_save   => 'Your lock has been expired while you were editing tender! Lock this tender again before editing and saving!',
+    :lock_released    => 'Lock successfully realeased!'
+  }
   
   TENDER_FIELD_ORDER = [ 
     ["general", 
@@ -65,7 +66,7 @@ class Tender < ActiveRecord::Base
      "updated_at",
      "last_time_edited_by",
      "marked_for_export",
-     "locked_status",
+     "lock_status",
      "locked_by",
      "locked_at",
      "status"
@@ -129,26 +130,33 @@ class Tender < ActiveRecord::Base
     lock_status == 'locked' || lock_expired?
   end
   
-  def toggle_lock(session_id)
-    result = {}
+  def lock
+    self.lock_status = 'locked'
+    
+    return {:msg => MESSAGES[:lock_released], :status => 'info'} if self.save
+    {:msg => MESSAGES[:general_error], :status => 'error'}
+  end
+  
+  def unlock(session_id)
+    result = {:status => 'error'}
     
     if available_for_unlock?
-      self.lock_status  = 'locked_for_editing'
-      self.locked_at    = Time.now
-      self.locked_by    = session_id
+      # self.lock_status  = 'locked_for_editing'
+      # self.locked_at    = Time.now
+      # self.locked_by    = session_id
       
-      if self.save
-        result[:msg] = MESSAGES[:locked_for_user]
+      if update_attributes(:lock_status => 'locked_for_editing', :locked_at => Time.now, :locked_by => session_id)
+        result[:msg]    = MESSAGES[:locked_for_user]
+        result[:status] = 'info'
+        return result
       else
         result[:msg] = MESSAGES[:general_error]
       end
     else
       result[:msg]   = MESSAGES[:locked_by_others]
     end
-  end
-  
-  def update
     
+    result
   end
   
   def to_xml

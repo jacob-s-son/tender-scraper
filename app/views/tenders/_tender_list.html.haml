@@ -1,6 +1,7 @@
 - unless @tenders.empty?
   - @tenders.each do |t|
-    = render :partial => "tender", :locals => {:tender => t}
+    .tender-wrapper{:id => "tender-wrapper-#{t.id}"}
+      = render :partial => "tender", :locals => {:tender => t}
 - else
   %div{:class => "alert-message warning", :id => 'tenders-scraped-msg' }
     %p No new tenders!

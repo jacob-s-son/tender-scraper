@@ -1,6 +1,9 @@
 TenderScraper::Application.routes.draw do
   resources :tenders do
-    get 'toggle_lock', :on => :member
+    member do
+      get 'unlock'
+      get 'lock'
+    end
   end
   root :to => 'tenders#index'
 end

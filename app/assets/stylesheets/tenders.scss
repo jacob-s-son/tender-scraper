@@ -37,6 +37,7 @@ form {
   label 
   {
     padding-top: 0px;
+    width: 140px;
   }
     
   legend.form_legend 
@@ -59,11 +60,21 @@ form {
   display:none;
 }
 
-#tenders-scraped-msg
+.alert-message
 {
   text-align:center;
   p 
   {
     font-weight:bold;
   }
+  
+  p.hidden
+  {
+    display:none;
+  }
+}
+
+.tender-message 
+{
+  display:none;
 }
