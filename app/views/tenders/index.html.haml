@@ -1,6 +1,4 @@
 #tender-container{"data-url" => tenders_url }
-  - unless @tenders.empty?
-    - @tenders.each do |t|
-      = render :partial => "tender", :locals => {:tender => t}
-  - else
-    %p No new tenders!
+  = render "tender_list"
+#load-indicator-container{:class => ".span16"}
+  = image_tag "load_indicator.gif"

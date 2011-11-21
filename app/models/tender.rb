@@ -1,11 +1,21 @@
 class Tender < ActiveRecord::Base
   serialize :cpv_codes, Array
   after_initialize :set_defaults
-  scope :created_since, lambda { |ago|
-      where("tenders.created_at >= ?", ( ago ? Date.parse(ago) : Date.today ) )
-    }
+  scope :created_since, lambda { |ago| where("tenders.created_at >= ?", ( ago ? Date.parse(ago) : Date.today ) ) }
+
   self.per_page = 10
-  STATUSES = [ :new, :marked_for_export, :exported]
+  STATUSES      = [ :new, :marked_for_export, :exported]
+  LOCK_INTERVAL = 5*60 #5 min
+  
+  MESSAGES = 
+  [
+    :locked           => 'You need to lock this tender for editing before edit it!',
+    :locked_by_others => 'This tender is already locked for editing by another user!',
+    :locked_for_user  => 'Tender successfully locked for editing! You may now update tender fields!',
+    :saved            => 'Tender successfully saved!',
+    :general_error    => 'System error, please, try again!',
+    :could_not_save   => 'Your lock has been expired while you were editing tender! Lock this tender again before editing and saving!'
+  ]
   
   TENDER_FIELD_ORDER = [ 
     ["general", 
@@ -55,7 +65,9 @@ class Tender < ActiveRecord::Base
      "updated_at",
      "last_time_edited_by",
      "marked_for_export",
-     "locked",
+     "locked_status",
+     "locked_by",
+     "locked_at",
      "status"
     ]
   
@@ -94,8 +106,49 @@ class Tender < ActiveRecord::Base
     end
   end
   
-  def locked?
-    locked
+  #form disabled a) if it's locked for everyone (no one has intended to edit this tender)
+  #b) if it's locked by another user for editing
+  def locked?(session_id)
+    lock_status == 'locked' || ( lock_status == 'locked_for_editing' && locked_by != session_id )
+  end
+  
+  def lock_expired?
+    locked_at + LOCK_INTERVAL < Time.now
+  end
+  
+  # available if status not locked
+  # and ( if status is locked_for_editing, then lock must been made by current_user
+  # or if locked for editing by another user and lock has expired
+  def available_for_edit?(session_id)
+    !locked?(session_id) || ( lock_status = 'locked_for_editing' && lock_expired? )
+  end
+  
+  # tender can be unlocked for editing if it's generally locked (for everyone)
+  # or user lock has been expired
+  def available_for_unlock?
+    lock_status == 'locked' || lock_expired?
+  end
+  
+  def toggle_lock(session_id)
+    result = {}
+    
+    if available_for_unlock?
+      self.lock_status  = 'locked_for_editing'
+      self.locked_at    = Time.now
+      self.locked_by    = session_id
+      
+      if self.save
+        result[:msg] = MESSAGES[:locked_for_user]
+      else
+        result[:msg] = MESSAGES[:general_error]
+      end
+    else
+      result[:msg]   = MESSAGES[:locked_by_others]
+    end
+  end
+  
+  def update
+    
   end
   
   def to_xml
@@ -104,9 +157,11 @@ class Tender < ActiveRecord::Base
   
   private
   def set_defaults
-    self.status = :new
-    self.exported_times = 0
-    self.locked = true
+    if self.id.nil?
+      self.status         = :new
+      self.exported_times = 0
+      self.lock_status    = 'locked'
+    end
   end
   
 end

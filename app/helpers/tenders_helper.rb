@@ -19,8 +19,8 @@ module TendersHelper
   end
   
   def tender_label(tender)
-    label_type = case tender.status
-      when :new 
+    label_type = case tender.status.to_sym
+      when :new
         "success"
       when :marked_for_export
         "warning"

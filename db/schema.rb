@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20111119191250) do
+ActiveRecord::Schema.define(:version => 20111121113724) do
 
   create_table "proxy_servers", :force => true do |t|
     t.string   "ip"
@@ -60,8 +60,10 @@ ActiveRecord::Schema.define(:version => 20111119191250) do
     t.datetime "updated_at"
     t.integer  "last_time_edited_by"
     t.boolean  "marked_for_export"
-    t.boolean  "locked"
+    t.string   "lock_status"
     t.string   "status"
+    t.datetime "locked_at"
+    t.string   "locked_by"
   end
 
 end

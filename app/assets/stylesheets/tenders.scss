@@ -52,3 +52,18 @@ form {
     }
   }
 }
+
+#load-indicator-container 
+{
+  text-align:center;
+  display:none;
+}
+
+#tenders-scraped-msg
+{
+  text-align:center;
+  p 
+  {
+    font-weight:bold;
+  }
+}

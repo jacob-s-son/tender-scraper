@@ -8,7 +8,7 @@ gem 'mechanize'#, :git => 'git://github.com/tenderlove/mechanize.git'# , :ref =>
 gem 'mongrel'
 gem 'bootstrap-sass', '1.4.0'
 gem 'haml'
-gem 'twitter_bootstrap_form_for', :git => 'https://github.com/stouset/twitter_bootstrap_form_for.git', :ref => 'baeef0edc0bd936168c1851aa025e6fba469b35b'
+gem 'twitter_bootstrap_form_for'#, :git => 'https://github.com/stouset/twitter_bootstrap_form_for.git', :ref => 'baeef0edc0bd936168c1851aa025e6fba469b35b'
 gem 'mysql2'
 gem 'will_paginate'
 
