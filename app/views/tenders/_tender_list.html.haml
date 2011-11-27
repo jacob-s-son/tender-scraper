@@ -1,5 +1,7 @@
 - unless @tenders.empty?
   - @tenders.each do |t|
+    %div{:class => ".span16 load-indicator", :id => "load-indicator-container-#{t.id}"}
+      = image_tag "load_indicator.gif"
     .tender-wrapper{:id => "tender-wrapper-#{t.id}"}
       = render :partial => "tender", :locals => {:tender => t}
 - else

@@ -1,30 +1,68 @@
+$inline_second_label_width: 100px;
+$inline_second_input_margin: 100px + 10px;
+$inline_second_wrapper_width: 350px;
+$default_label_width: 140px;
+$legend_span_width: 220px;
+$form_font_size: 12px;
+
 form {
+  input:not([type='submit']), label, legend
+  {
+    font-size: $form_font_size !important;
+    height: $form_font_size !important;
+  }
+  
+  fieldset 
+  {
+    margin-bottom: 5px;
+    legend
+    {
+      font-weight: bold;
+      padding-top: 2px;
+      padding-bottom: 0px;
+      span 
+      {
+        display: inline-block;
+        width: $legend_span_width;
+      }
+      span.buyer-legend
+      {
+        float: left;
+      }
+      span.contact-legend
+      {
+        margin-left: $inline_second_input_margin;
+      }
+    }
+  }
+  
   div.inline-inputs 
   {
-    display:block;
-    clear:both;
+    display: block;
+    clear: both;
     
     div.clearfix 
     {
-      display:inline-block;
-      float:left;
+      display: inline-block;
+      float: left;
             
       input, label
       {
-        display:inline-block;
-        float:left;
+        display: inline-block;
+        float: left;
       }      
     }
     
     div.clearfix:nth-child(2)
     {
+      width: 350px;
       div.input 
       {
-        margin-left:60px;
+        margin-left: $inline_second_input_margin;
       } 
       label
       {
-        width:50px;
+        width: $inline_second_label_width;
       } 
     }
   }
@@ -37,11 +75,7 @@ form {
   label 
   {
     padding-top: 0px;
-    width: 140px;
-  }
-    
-  legend.form_legend 
-  {
+    width: $default_label_width;
   }
     
   fieldset.hidden_legend 
@@ -49,32 +83,32 @@ form {
     padding-top: 0px;
     legend 
     {
-      display:none;   
+      display: none;   
     }
   }
 }
 
-#load-indicator-container 
+.load-indicator 
 {
-  text-align:center;
-  display:none;
+  text-align: center;
+  display: none;
 }
 
 .alert-message
 {
-  text-align:center;
+  text-align: center;
   p 
   {
-    font-weight:bold;
+    font-weight: bold;
   }
   
   p.hidden
   {
-    display:none;
+    display: none;
   }
 }
 
 .tender-message 
 {
-  display:none;
+  display: none;
 }

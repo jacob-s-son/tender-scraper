@@ -12,16 +12,13 @@ class TendersController < ApplicationController
   end
   
   def update
-    if @tender.update(params)
-      flash[:notice] = "Tender updated"
-    else
-      flash[:error] = "Could not update tender. Please try again."
-    end
+    flash[:notice] = Tender::MESSAGES[:saved] if @tender.update_tender(params[:tender], @session_id)
+    render :partial => 'tender', :locals => { :tender => @tender }
   end
   
   def lock
     respond_to do |format|
-      format.json { render :json => @tender.lock }
+      format.json { render :json => @tender.lock(@session_id) }
     end
   end
   

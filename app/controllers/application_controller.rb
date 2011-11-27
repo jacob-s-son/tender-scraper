@@ -4,6 +4,7 @@ class ApplicationController < ActionController::Base
   
   private
   def set_session_id
-    @session_id ||= session.id
+    session[:user_auth] ||= session.id
+    @session_id = session[:user_auth]
   end
 end

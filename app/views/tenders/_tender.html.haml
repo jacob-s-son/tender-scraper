@@ -1,13 +1,12 @@
 .tender-controls
   = tender_label(tender)
-  = button_tag 'Edit', :class => 'btn form-unlocker', :id => "unlock-tender-form-#{tender.id}", :"data-url" => unlock_tender_path(tender.id)
-  %div{ :id => "tender-#{tender.id}-message", :class => "alert-message tender-message" }
-    %p{ :class => 'hidden'}
-    - unless tender.errors.empty?
-      - tender.errors.each do |e|
-        %p= e.to_s
+  - if tender.available_for_unlock?
+    = button_tag 'Edit', :class => 'btn form-unlocker', :id => "unlock-tender-form-#{tender.id}", :"data-url" => unlock_tender_path(tender.id)
+  - else
+    = button_tag 'Edit', :class => 'btn form-unlocker', :id => "unlock-tender-form-#{tender.id}", :"data-url" => unlock_tender_path(tender.id), :disabled => true
+  = render :partial => 'layouts/msg_box', :locals => {:subject => tender}
 = link_to tender.url, tender.url
-= twitter_bootstrap_form_for tender do |f|
+= twitter_bootstrap_form_for tender, :remote => true do |f|
   = f.inputs do
     - Tender::TENDER_FIELD_ORDER.each do |cat|
       - if cat[0] == 'dates'
@@ -16,17 +15,23 @@
             .inline-inputs
               = tender_field_helper f, attr[0], {:disabled => tender.locked?(@session_id) }
               = tender_field_helper f, attr[1], {:disabled => tender.locked?(@session_id), :label => ', time', :class => '' }
-      -else
+      - elsif cat[0] == 'buyer-contact'
+        = f.inputs buyer_contact_legend, :class => 'buyer_inputs_container' do
+          - cat[1].each do |attr|
+            .inline-inputs
+              = tender_field_helper f, attr[0], {:disabled => tender.locked?(@session_id) }
+              = tender_field_helper f, attr[1], {:disabled => tender.locked?(@session_id), :class => '' }
+      - else
         = f.inputs "#{cat[0].capitalize unless cat[0] == 'general'}", :class => "#{cat[0] == 'general' ? 'hidden_legend' : 'form_legend'}" do
           - cat[1].each do |attr|
             = tender_field_helper f, attr, {:disabled => tender.locked?(@session_id) }
-    - Tender.misc_fields.each do |attr|
-      = tender_field_helper f, attr, { :disabled => tender.locked?(@session_id) }
+    = f.inputs "Misc", :class => 'form_legend' do
+      - Tender.misc_fields.each do |attr|
+        = tender_field_helper f, attr, { :disabled => tender.locked?(@session_id) }
   = f.actions do
     - if tender.locked?(@session_id)
-      = f.submit 'Save', :disabled => "true"
+      = f.submit 'Save', :disabled => "true", :id => "tender-#{tender.id}-submit-btn"
       = button_tag  'Cancel', :type => 'reset', :"data-url" => lock_tender_path(tender), :class => 'btn cancel', :id => "tender-#{tender.id}-cancel-btn", :disabled => "true"
     - else
-      = f.submit 'Save'
+      = f.submit 'Save', :id => "tender-#{tender.id}-submit-btn"
       = button_tag  'Cancel', :type => 'reset', :"data-url" => lock_tender_path(tender), :class => 'btn cancel', :id => "tender-#{tender.id}-cancel-btn"
-      

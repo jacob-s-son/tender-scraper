@@ -29,69 +29,77 @@ class TendersPager
       @request_finished = true
     else
       $(window).unbind('scroll', @check)
+
+class TenderForm
+  constructor: (@form_id) ->
+    @tender_id = form_id.match /[0-9]+$/ #"edit_tender_123"
+    @init()
+  
+  init: =>
+    @form = $("##{@form_id}")
+    @cancel_button = $("#tender-#{@tender_id}-cancel-btn")
+    @unlock_button= $("#unlock-tender-form-#{@tender_id}")
+    @msg_box = $("#tender-#{@tender_id}-message")
+    @msg_paragraph = @msg_box.find('p:first')
+    @load_indicator = $("#load-indicator-container-#{@tender_id}")
+    @attach_events()
+
+  attach_events: =>
+    @cancel_button.click(@lock_form)
+    @unlock_button.click(@unlock_form)
+    @form.bind("ajax:beforeSend",  @toggle_loading)
+    @form.bind "ajax:complete", (event, data, status, xhr) =>
+      @toggle_loading()
+      @form.parent().html(data.responseText)
+      @init() # rebind events to form elements
+      @msg_box.show()
+      @msg_paragraph.show()
     
+    @form.addClass('with-events')
+    
+  # enabling form
+  lock_form: (event) =>
+    @msg_box.hide()
+    $.getJSON @cancel_button.data('url'), (result) =>
+      @toggle_form_state(result)
+        
+  #disabling form
+  unlock_form: (event) =>
+    @msg_box.hide()
+    $.getJSON @unlock_button.data('url'), (result) =>
+      @toggle_form_state(result)
+  
+  toggle_form_state: (result)=>
+    @msg_paragraph.text(result.msg)
+    @msg_box.addClass(result.status)
+
+    unless result.status == 'error'
+      form_lock = @is_form_disabled()
+      if form_lock then @unlock_button.attr('disabled', form_lock) else @unlock_button.removeAttr('disabled')
+      @form.find("input, select, button").each (index, value) =>
+        $(value).attr('disabled', !form_lock)
+    
+    @show_message()
+  
+  show_message: =>
+    @msg_box.show()
+    @msg_paragraph.show()
+    setTimeout ( =>
+      @msg_box.fadeOut(2500)
+    ), 500
+  
+  toggle_loading: =>
+    @load_indicator.toggle()
+    @form.parent().toggle()
+  
+  is_form_disabled: =>
+    @cancel_button.attr('disabled')
+
+  
 #FIXME: this piece cries for refactor - too much code repeated
 class TenderUpdater
   contructor: ->
   
   attach_events: =>
-    @attach_event_to_edit_buttons()
-    # @attach_event_to_submit_buttons
-    @attach_event_to_cancel_buttons()
-  
-  attach_event_to_edit_buttons: =>
-    for elem in $('button.form-unlocker:not(.unlock-event-attached)')
-      $(elem).addClass('unlock-event-attached')
-      $(elem).click(@unlock_form)
-  
-  attach_event_to_cancel_buttons: =>
-    for elem in $('button.cancel:not(.cancel-event-attached)')
-      $(elem).addClass('cancel-event-attached')
-      $(elem).click(@lock_form)
-  
-  lock_form: (event) =>
-    elem = $(event.currentTarget)
-    console.log elem
-    id = elem.attr('id').match(/-([0-9]+)-/)[1]
-    form_id = "edit_tender_" + id
-    console.log id
-    msg_container = $("#tender-#{id}-message")
-    msg_container.hide()
-    $.getJSON elem.data('url'), (result) =>
-      paragraph = $(msg_container.children().first())
-      paragraph.text(result.msg)
-      msg_container.addClass(result.status)
-    
-      unless result.status == 'error'
-        $("#unlock-tender-form-#{id}").attr('disabled', false)
-        $("##{form_id}").find("input, select, button").each ->
-          $(this).attr('disabled', true)
-          
-      msg_container.show()
-      paragraph.show()
-      setTimeout ( =>
-        msg_container.fadeOut(1400)
-      ), 500
-  
-  unlock_form: (event) =>
-    elem = $(event.currentTarget)
-    id = elem.attr('id').match /[0-9]+$/
-    form_id = "edit_tender_" + id
-    msg_container = $("#tender-#{id}-message")
-    msg_container.hide()
-    $.getJSON elem.data('url'), (result) =>
-      paragraph = $(msg_container.children().first())
-      paragraph.text(result.msg)
-      msg_container.addClass(result.status)
-    
-      unless result.status == 'error'
-        elem.attr('disabled', true)
-        $("##{form_id}").find("input, select, button").each ->
-          child = $(this)
-          child.attr('disabled', false)
-      
-      msg_container.show()
-      paragraph.show()
-      setTimeout ( =>
-        msg_container.fadeOut(1400)
-      ), 500
+    for elem in $('form:not(.with-events)')
+      t = new TenderForm($(elem).attr('id'))

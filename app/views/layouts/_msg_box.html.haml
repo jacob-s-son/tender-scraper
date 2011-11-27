@@ -1,0 +1,8 @@
+- subject_name = subject.class.to_s.downcase
+- msg_type = subject.errors.empty? ? ( flash[:notice] ? 'success' : 'alert') : 'error'
+%div{ :id => "#{subject_name}-#{subject.id}-message", :class => "alert-message #{subject_name}-message #{msg_type}" }
+  %p{ :class => 'hidden'}
+    = flash.now[:notice] if flash[:notice]
+    - unless subject.errors.empty?
+      - subject.errors.each do |e|
+        %p= e.to_s
