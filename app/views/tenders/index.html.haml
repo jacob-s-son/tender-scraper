@@ -1,4 +1,4 @@
-#tender-container{"data-url" => tenders_url }
+#tender-container{"data-url" => tenders_url, "data-status-url" => get_statuses_tenders_url }
   = render "tender_list"
 #load-indicator-container{:class => ".span16 load-indicator"}
   = image_tag "load_indicator.gif"

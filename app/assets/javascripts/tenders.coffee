@@ -95,11 +95,120 @@ class TenderForm
   is_form_disabled: =>
     @cancel_button.attr('disabled')
 
+class TenderMarker
+  constructor: (cb_id)->
+    @checkbox = $("##{cb_id}")
+    @tender_id = cb_id.match /[0-9]+$/
+    @container = @checkbox.parent()
+    @load_indicator = $("#marker-load-indicator-#{@tender_id}")
+    @checkbox.change @mark_for_export
+    
+    @checkbox.addClass('with-events')
+    
+  mark_for_export: =>
+    alert 'Works !'
+
+class TenderLabel
+  constructor: (label_id)->
+    @label = $("##{label_id}")
+    @tender_id = label_id.match /[0-9]+$/
+    @load_indicator = $("#label-load-indicator-#{@tender_id}").parent()
+    # @load_indicator_container = @load_indicator.parent()
+    
+    @label.addClass "with-events"
   
-#FIXME: this piece cries for refactor - too much code repeated
+  current_status: =>
+    @label.text().toLowerCase()
+  
+  toggle_loading: =>
+    @load_indicator.width(@label.parent().width()) if @label.is(':visible')
+    @label.toggle()
+    @load_indicator.toggle()
+    
+  update: (status)=>
+    label_type = switch status.toLowerCase()
+      when "new"
+        "success"
+      when "edited", "marked for export"
+        "warning"
+      when "exported"
+        "important"
+    
+    @label.removeAttr 'class'
+    @label.attr 'class', "label #{label_type}"
+    @label.text(status)
+
+class TenderStatusUpdater
+  constructor: ->
+    @existing_labels = {}
+    @interval = 10000
+    setTimeout ( => @update_statuses() ), @interval
+  
+  labels: =>
+    for elem in $('span.label:not(.with-events)')
+      label_id = $(elem).attr('id')
+      unless @existing_labels[label_id]
+        @existing_labels[label_id] = new TenderLabel label_id
+    
+    @existing_labels
+      
+  update_statuses: =>
+    @start = new Date().getTime()
+    json_str = {}
+    for label_id, label of @labels()
+      label.toggle_loading()
+      json_str[label.tender_id] = label.current_status()
+    
+    $.getJSON $('#tender-container').data('status-url'), {tender_statuses: json_str}, (result) =>
+      @update_labels(result)
+    
+  update_labels: (statuses) =>
+    for label_id, label of @existing_labels
+      label.update statuses[label.tender_id] if statuses[label.tender_id]
+      label.toggle_loading()
+    
+    @finish = new Date().getTime()
+    
+    setTimeout ( 
+      => @update_statuses() 
+    ), @interval
+
 class TenderUpdater
   contructor: ->
   
   attach_events: =>
+    @attach_form_events()
+    @attach_marker_events()
+    @attach_status_updater() unless @status_updater
+    
+  attach_form_events: =>
     for elem in $('form:not(.with-events)')
-      t = new TenderForm($(elem).attr('id'))
+      new TenderForm($(elem).attr('id'))
+  
+  attach_marker_events: =>
+    for elem in $('.marker-cb:not(.with-events)')
+      new TenderMarker($(elem).attr('id'))
+      
+  attach_status_updater: =>
+    @status_updater = new TenderStatusUpdater()
+    
+class @Tester
+  constructor: ->
+    @img = $("#label-load-indicator-167")
+    @img_container = $("#label-load-indicator-167").parent()
+    @label = $("#status-label-167")
+    @label_container = @label.parent()
+  
+  show_img: =>
+    w = @label_container.width()
+    @img_container.width(w)
+    @label.hide()
+    @img_container.show()
+  
+  hide_img: =>
+    @img_container.hide()
+    @label.show()
+  
+    
+  toggle: =>
+    if @label.is(':visible') then @show_img() else @hide_img()

@@ -31,7 +31,7 @@ module TendersHelper
         "important"
       end
       
-    "<span class='label #{label_type}'>#{tender.status.to_s.capitalize}</span>".html_safe
+    "<span id='status-label-#{tender.id}' class='label #{label_type}'>#{tender.status.to_s.capitalize}</span>".html_safe
   end
   
   def buyer_contact_legend

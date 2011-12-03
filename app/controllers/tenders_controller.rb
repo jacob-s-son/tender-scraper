@@ -28,6 +28,13 @@ class TendersController < ApplicationController
     end
   end
   
+  def get_statuses
+    sleep(5)
+    respond_to do |format|
+      format.json { render :json => Tender.get_statuses(params[:tender_statuses]) }
+    end
+  end
+  
   private
   def find_tender
     @tender = Tender.find(params[:id])

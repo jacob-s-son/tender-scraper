@@ -100,6 +100,13 @@ class Tender < ActiveRecord::Base
     def clean_params(params)
       params.reject {|key,value| !column_names.include?(key.to_s) || key == "created_at" }
     end
+    
+    def get_statuses(params)
+      where('id in (:ids)', :ids => params.map { |k,v| k.to_i }).inject({}) do |memo, tender|
+        memo[tender.id.to_s] = tender.status.capitalize unless tender.status == params[tender.id.to_s]
+        memo
+      end
+    end
   end
   
   #form disabled a) if it's locked for everyone (no one has intended to edit this tender)
@@ -179,6 +186,10 @@ class Tender < ActiveRecord::Base
       
       memo 
     end.to_xml(:skip_instruct => true, :skip_types => true)
+  end
+  
+  def marked?
+    status == :marked_for_export
   end
   
   private

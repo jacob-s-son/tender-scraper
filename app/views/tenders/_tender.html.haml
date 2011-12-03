@@ -1,9 +1,15 @@
 .tender-controls
-  = tender_label(tender)
+  .label-container
+    .label-load-indicator-container
+      = image_tag 'load-indicator-small.gif', :id => "label-load-indicator-#{tender.id}", :class => "label-load-indicator"
+    = tender_label tender
   - if tender.available_for_unlock?
     = button_tag 'Edit', :class => 'btn form-unlocker', :id => "unlock-tender-form-#{tender.id}", :"data-url" => unlock_tender_path(tender.id)
   - else
     = button_tag 'Edit', :class => 'btn form-unlocker', :id => "unlock-tender-form-#{tender.id}", :"data-url" => unlock_tender_path(tender.id), :disabled => true
+  .marker-container{ :id => "marker-container-#{tender.id}"}
+    = label_tag 'Mark for export'
+    = check_box_tag "marker-cb-#{tender.id}", "1", tender.marked?, :class => 'marker-cb'
   = render :partial => 'layouts/msg_box', :locals => {:subject => tender}
 = link_to tender.url, tender.url
 = twitter_bootstrap_form_for tender, :remote => true do |f|
